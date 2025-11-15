@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Hoang Minh — Portfolio</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <meta name="description" content="Portfolio của Hoang Minh - developer ở Việt Nam.">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <img src="images/avatar.jpg" alt="Hoang Minh portrait" class="avatar">
+      <div>
+        <h1>Hoang Minh</h1>
+        <p class="lead">Frontend developer & web designer — Vietnam</p>
+        <p class="meta">Email: <a href="mailto:hoang.minh@example.com">hoang.minh@example.com</a> • Location: Vietnam</p>
+      </div>
+    </div>
+
+    <nav aria-label="Main Navigation" class="main-nav">
+      <div class="container">
+        <ul>
+          <li><a href="index.html" aria-current="page">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="projects.html">Projects</a></li>
+          <li><a href="gallery.html">Gallery</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="map.html">Map</a></li>
+          <li><a href="policy.html">Policy</a></li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container main-content">
+    <section class="hero" aria-labelledby="hero-title">
+      <h2 id="hero-title">Hi — I’m Hoang Minh</h2>
+      <p>I build accessible, responsive websites. I love JavaScript, clean UI, and UX that delights.</p>
+      <p><a class="btn" href="projects.html">See my work</a> <a class="btn secondary" href="contact.html">Get in touch</a></p>
+    </section>
+
+    <section aria-labelledby="skills" class="cards">
+      <h3 id="skills">Skills & Services</h3>
+      <div class="grid">
+        <article class="card" aria-labelledby="s1">
+          <h4 id="s1">Frontend Development</h4>
+          <p>HTML5, CSS3, JavaScript, responsive design, accessibility (a11y).</p>
+        </article>
+        <article class="card" aria-labelledby="s2">
+          <h4 id="s2">UI/UX Design</h4>
+          <p>Wireframes, prototypes, clean visual design and typography.</p>
+        </article>
+        <article class="card" aria-labelledby="s3">
+          <h4 id="s3">CMS & Deployment</h4>
+          <p>Simple CMS integration, GitHub Pages & Netlify deployment.</p>
+        </article>
+      </div>
+    </section>
+
+    <section aria-labelledby="featured">
+      <h3 id="featured">Featured Projects</h3>
+      <ul class="project-list">
+        <li><a href="projects.html#proj1">E-commerce UI — demo</a></li>
+        <li><a href="projects.html#proj2">Travel blog template</a></li>
+        <li><a href="projects.html#proj3">Interactive map app</a></li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="container">
+      <p>© <span id="year"></span> Hoang Minh — Vietnam • <a href="policy.html">Policies</a></p>
+    </div>
+  </footer>
+
+  <script src="js/script.js"></script>
+</body>
+</html>

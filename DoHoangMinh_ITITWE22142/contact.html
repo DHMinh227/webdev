@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Contact — Hoang Minh</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <img src="images/avatar.jpg" alt="Hoang Minh portrait" class="avatar">
+      <div><h1>Contact</h1><p class="lead">Send a message</p></div>
+    </div>
+
+    <nav aria-label="Main Navigation" class="main-nav">
+      <div class="container">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="projects.html">Projects</a></li>
+          <li><a href="contact.html" aria-current="page">Contact</a></li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container">
+    <form id="contactForm" action="#" method="post" enctype="multipart/form-data" novalidate>
+      <fieldset>
+        <legend>Contact form</legend>
+
+        <label for="name">Full name *</label>
+        <input id="name" name="name" type="text" required minlength="2" maxlength="60" placeholder="Hoang Minh">
+
+        <label for="email">Email *</label>
+        <input id="email" name="email" type="email" required placeholder="you@example.com">
+
+        <label for="tel">Phone</label>
+        <input id="tel" name="tel" type="tel" pattern="^\+?\d{7,15}$" placeholder="+84xxxxxxxx">
+
+        <label for="role">How can I help?</label>
+        <select id="role" name="role" required>
+          <option value="">Select one</option>
+          <option>Freelance project</option>
+          <option>Job opportunity</option>
+          <option>Collaboration</option>
+        </select>
+
+        <label for="budget">Budget (USD)</label>
+        <input id="budget" name="budget" type="number" min="0" max="100000" step="1" placeholder="500">
+
+        <label for="date">Preferred date</label>
+        <input id="date" name="date" type="date">
+
+        <label>Preferred contact method</label>
+        <div class="radio-group">
+          <label><input type="radio" name="contactMethod" value="email" checked> Email</label>
+          <label><input type="radio" name="contactMethod" value="phone"> Phone</label>
+        </div>
+
+        <label>Interests</label>
+        <div class="checkbox-group">
+          <label><input type="checkbox" name="interest" value="web"> Web</label>
+          <label><input type="checkbox" name="interest" value="design"> Design</label>
+          <label><input type="checkbox" name="interest" value="seo"> SEO</label>
+        </div>
+
+        <label for="message">Message *</label>
+        <textarea id="message" name="message" rows="6" required minlength="10" maxlength="2000" placeholder="Tell me about your project..."></textarea>
+
+        <label for="role-suggest">Suggest a role (type to see suggestions)</label>
+        <input id="role-suggest" list="roles" name="role-suggest" placeholder="e.g. Frontend dev">
+        <datalist id="roles">
+          <option value="Frontend developer">
+          <option value="UI/UX designer">
+          <option value="Fullstack developer">
+        </datalist>
+
+        <label for="file">Attach file (optional)</label>
+        <input id="file" name="file" type="file" accept=".pdf,.doc,.docx,image/*">
+
+        <input type="hidden" name="ref" value="portfolio-contact">
+
+        <div class="form-controls">
+          <button type="submit" class="btn">Send</button>
+          <button type="reset" class="btn secondary">Reset</button>
+        </div>
+
+        <p id="formMessage" role="status" aria-live="polite"></p>
+
+        <!-- Optional progress + meter -->
+        <label for="progress">Message length</label>
+        <meter id="progress" min="0" max="2000" low="200" high="1500" value="0">0/2000</meter>
+
+      </fieldset>
+    </form>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>© <span id="year7"></span> Hoang Minh</p>
+    </div>
+  </footer>
+
+  <script src="js/script.js"></script>
+</body>
+</html>

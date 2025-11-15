@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>How I built a responsive portfolio — Hoang Minh</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <img src="images/avatar.jpg" alt="Hoang Minh portrait" class="avatar">
+      <div><h1>How I built a responsive portfolio</h1><p class="lead">A short case study</p></div>
+    </div>
+
+    <nav aria-label="Main Navigation" class="main-nav">
+      <div class="container">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="projects.html">Projects</a></li>
+          <li><a href="blog.html">Blog</a></li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container">
+    <article>
+      <p class="meta">Posted: 2025-11-01</p>
+      <p>This article explains responsive patterns I used: Grid for layouts, Flexbox for small UI parts, and simple media queries at 768px breakpoint.</p>
+
+      <h3>Key takeaways</h3>
+      <ol>
+        <li>Use semantic markup</li>
+        <li>Design mobile-first</li>
+        <li>Test with keyboard only</li>
+      </ol>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>© <span id="year6"></span> Hoang Minh</p>
+    </div>
+  </footer>
+  <script src="js/script.js"></script>
+</body>
+</html>
