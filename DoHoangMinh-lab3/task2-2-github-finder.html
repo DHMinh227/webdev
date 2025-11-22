@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>GitHub Repository Finder</title>
+    <style>
+        * { box-sizing: border-box; margin:0; padding:0; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background:#0d1117; color:#c9d1d9; padding:20px;
+        }
+        .container { max-width:1000px; margin:0 auto; }
+        .header { text-align:center; margin-bottom:40px; }
+        .header h1 { color:#58a6ff; margin-bottom:8px; }
+        .search-container { background:#161b22; padding:20px; border-radius:8px; margin-bottom:30px; }
+        .search-box { display:flex; gap:10px; margin-bottom:15px; }
+        .search-box input { flex:1; padding:12px; background:#0d1117; border:1px solid #30363d; border-radius:6px; color:#c9d1d9; font-size:16px; }
+        .search-box button { padding:12px 30px; background:#238636; color:white; border:none; border-radius:6px; cursor:pointer; }
+        .filters { display:flex; gap:10px; align-items:center; color:#8b949e; }
+        .filters select { padding:8px 12px; background:#0d1117; border:1px solid #30363d; border-radius:6px; color:#c9d1d9; }
+        .repo-card { background:#161b22; border:1px solid #30363d; border-radius:8px; padding:20px; margin-bottom:15px; transition:transform 0.2s; }
+        .repo-card:hover { transform:translateY(-2px); border-color:#58a6ff; }
+        .repo-name { color:#58a6ff; font-size:20px; font-weight:bold; text-decoration:none; }
+        .repo-description { color:#8b949e; margin:10px 0; }
+        .repo-meta { display:flex; gap:20px; font-size:14px; color:#8b949e; align-items:center; flex-wrap:wrap; }
+        .language-badge { display:inline-block; padding:4px 10px; background:#1f6feb; border-radius:12px; font-size:12px; color:white; }
+        .loading { text-align:center; padding:40px; color:#8b949e; }
+        .error { background:#da3633; color:white; padding:15px; border-radius:6px; margin-bottom:20px; }
+        .load-more { text-align:center; margin:30px 0; }
+        .load-more button { padding:12px 40px; background:#21262d; border:1px solid #30363d; color:#c9d1d9; border-radius:6px; cursor:pointer; }
+        .meta-right { margin-left:auto; color:#8b949e; font-size:13px; }
+        a.owner { color:#9AE6B4; text-decoration:none; font-weight:600; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 GitHub Repository Finder</h1>
+            <p style="color:#8b949e;">Search and explore GitHub repositories</p>
+        </div>
+
+        <div class="search-container">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search repositories..." onkeypress="if(event.key==='Enter') performSearch()">
+                <button onclick="performSearch()">Search</button>
+            </div>
+
+            <div class="filters">
+                <label>Sort by:</label>
+                <select id="sortSelect" onchange="performSearch()">
+                    <option value="stars">⭐ Stars</option>
+                    <option value="forks">🔱 Forks</option>
+                    <option value="updated">🕒 Recently Updated</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="errorMessage"></div>
+        <div id="repoList"></div>
+        <div id="loadMoreContainer"></div>
+    </div>
+
+    <script>
+        let currentPage = 1;
+        let currentQuery = '';
+        let totalResults = 0;
+        const perPage = 10;
+
+        const repoList = document.getElementById('repoList');
+        const errorMessage = document.getElementById('errorMessage');
+        const loadMoreContainer = document.getElementById('loadMoreContainer');
+
+        function showLoading() {
+            repoList.innerHTML = `<div class="loading">Loading repositories…</div>`;
+        }
+        function clearLoading() { /* replaced by render */ }
+        function showError(msg) {
+            errorMessage.innerHTML = `<div class="error">${msg}</div>`;
+        }
+        function clearError() { errorMessage.innerHTML = ''; }
+
+        function formatNumber(num) {
+            if (!num && num !== 0) return '0';
+            if (num >= 1000000) return (num/1000000).toFixed(1) + 'M';
+            if (num >= 1000) return (num/1000).toFixed(1) + 'k';
+            return String(num);
+        }
+
+        function createRepoCard(repo) {
+            const html = document.createElement('div');
+            html.className = 'repo-card';
+            html.innerHTML = `
+                <a class="repo-name" href="${repo.html_url}" target="_blank">${repo.full_name}</a>
+                <div class="repo-description">${repo.description || '<span style="color:#6b6f76">No description</span>'}</div>
+                <div class="repo-meta">
+                    <div>⭐ ${formatNumber(repo.stargazers_count)}</div>
+                    <div>🔱 ${formatNumber(repo.forks_count)}</div>
+                    ${repo.language ? `<div class="language-badge">${repo.language}</div>` : ''}
+                    <div class="meta-right">Owner: <a class="owner" href="https://github.com/${repo.owner.login}" target="_blank">${repo.owner.login}</a></div>
+                </div>
+            `;
+            return html;
+        }
+
+        async function searchRepositories(query, sort = 'stars', page = 1) {
+            // Respect empty query
+            if (!query) {
+                showError('Please enter a search keyword.');
+                return { total_count: 0, items: [] };
+            }
+            clearError();
+            const url = `https://api.github.com/search/repositories?q=${encodeURIComponent(query)}&sort=${encodeURIComponent(sort)}&page=${page}&per_page=${perPage}`;
+            const resp = await fetch(url);
+            if (!resp.ok) {
+                const status = resp.status;
+                const text = await resp.text();
+                const err = new Error('GitHub API error');
+                err.status = status;
+                err.body = text;
+                throw err;
+            }
+            return await resp.json();
+        }
+
+        async function performSearch() {
+            clearError();
+            repoList.innerHTML = '';
+            loadMoreContainer.innerHTML = '';
+            currentQuery = document.getElementById('searchInput').value.trim();
+            const sort = document.getElementById('sortSelect').value;
+            if (!currentQuery) { showError('Enter a search term.'); return; }
+            currentPage = 1;
+            showLoading();
+            try {
+                const result = await searchRepositories(currentQuery, sort, currentPage);
+                totalResults = result.total_count || 0;
+                displayRepositories(result.items || [], false);
+                renderLoadMoreIfNeeded();
+            } catch (err) {
+                handleGitHubError(err);
+                repoList.innerHTML = '';
+            }
+        }
+
+        function displayRepositories(repos, append = false) {
+            clearError();
+            if (!append) repoList.innerHTML = '';
+            if (!repos || repos.length === 0) {
+                if (!append) repoList.innerHTML = `<div class="loading">No results found.</div>`;
+                return;
+            }
+            const fragment = document.createDocumentFragment();
+            repos.forEach(r => fragment.appendChild(createRepoCard(r)));
+            if (append) {
+                repoList.appendChild(fragment);
+            } else {
+                repoList.innerHTML = '';
+                repoList.appendChild(fragment);
+            }
+        }
+
+        async function loadMore() {
+            clearError();
+            currentPage += 1;
+            const sort = document.getElementById('sortSelect').value;
+            // show small loading button
+            loadMoreContainer.innerHTML = `<div class="load-more"><button disabled>Loading…</button></div>`;
+            try {
+                const result = await searchRepositories(currentQuery, sort, currentPage);
+                displayRepositories(result.items || [], true);
+                renderLoadMoreIfNeeded();
+            } catch (err) {
+                handleGitHubError(err);
+                // rollback page
+                currentPage -= 1;
+            }
+        }
+
+        function renderLoadMoreIfNeeded() {
+            const shown = currentPage * perPage;
+            if (shown < totalResults) {
+                loadMoreContainer.innerHTML = `<div class="load-more"><button onclick="loadMore()">Load More Results</button></div>`;
+            } else {
+                loadMoreContainer.innerHTML = '';
+            }
+        }
+
+        function handleGitHubError(err) {
+            if (!err) { showError('Unknown error'); return; }
+            if (err.status === 403) {
+                showError('Rate limit reached (60 requests/hour for unauthenticated). Try again later or authenticate with a token.');
+            } else {
+                showError('Failed to fetch from GitHub API. ' + (err.message || ''));
+            }
+        }
+
+        // small helper: pressing Enter triggers search
+        document.getElementById('searchInput').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') performSearch();
+        });
+
+    </script>
+</body>
+</html>
